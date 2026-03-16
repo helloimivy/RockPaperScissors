@@ -2,15 +2,6 @@
 // practicing using DOM; usually would create more inside of HTML document
 const container = document.getElementById("container");
 
-const humanRockSelection = document.createElement("button");
-humanRockSelection.textContent = "rock";
-container.appendChild(humanRockSelection);
-const humanPaperSelection = document.createElement("button");
-humanPaperSelection.textContent = "paper";
-container.appendChild(humanPaperSelection);
-const humanScissorsSelection = document.createElement("button");
-humanScissorsSelection.textContent = "scissors";
-container.appendChild(humanScissorsSelection);
 const results = document.createElement("div");
 results.style.minHeight = "100px";
 results.style.backgroundColor = "pink";
@@ -65,15 +56,34 @@ function playRound(humChoice) {
   }
   // Update resultsMessge and resultsScoreboard
   resultsMessage.textContent = winningMessage;
-  resultsScoreBoard.textContent = `
-  human score: ${humanScore}
-  computer score: ${computerScore}
-  `;
+  updateScoreBoard(humanScore, computerScore);
   numRounds++;
-  if (numRounds >= 5) {
+  if (humanScore === 5 || computerScore === 5) {
     // disable clickEvent
+    buttons.forEach((btn) => {
+      btn.style.pointerEvents = "none";
+    });
     // determine winner
-    // make a restart game button appear
+    if (humanScore === 5) {
+      resultsMessage.textContent = `You win! Good job!`;
+    } else {
+      resultsMessage.textContent = `Computer wins. Try again!`;
+    }
+    // make a restart game button appear and disappear
+    const playAgainButton = document.createElement("button");
+    playAgainButton.textContent = "Play Again";
+    results.appendChild(playAgainButton);
+    playAgainButton.addEventListener("click", () => {
+      resultsMessage.textContent =
+        "You have decided to play again. Make your selection";
+      humanScore = 0;
+      computerScore = 0;
+      updateScoreBoard(humanScore, computerScore);
+      buttons.forEach((btn) => {
+        btn.style.pointerEvents = "auto";
+      });
+      playAgainButton.remove();
+    });
   }
 }
 
@@ -93,4 +103,11 @@ function determineWinner(compChoice, humChoice) {
     return "Computer chose scissors and you chose paper. Computer wins.";
   }
   return winningMessage;
+}
+
+function updateScoreBoard(humanScore, computerScore) {
+  resultsScoreBoard.textContent = `
+        human score: ${humanScore}
+        computer score: ${computerScore}
+        `;
 }
